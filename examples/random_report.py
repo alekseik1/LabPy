@@ -1,8 +1,9 @@
 from src.main import *
 from elizabeth import Text
 from pylatex.utils import bold, italic
-from pylatex import Math, Alignat, VectorName, Matrix, Eqref, Marker, Pageref, Center
-from pylatex.basic import Environment
+from pylatex import Math, Alignat, VectorName, Eqref, Marker, Pageref, Center, Command, Section, NoEscape
+
+from src.summary import generate_summary
 
 if __name__ == '__main__':
     # Здесь будет тестирование работы ЛаТеХа
