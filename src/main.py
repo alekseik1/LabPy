@@ -1,5 +1,8 @@
 import pylatex as plx
-from pylatex import Document, Package
+from pylatex import Document, Package, Command, NoEscape, UnsafeCommand, LineBreak
+
+# Путь для картинок
+IMAGES_PATH = 'images/'
 
 
 def generate_preambula(doc: Document):
@@ -15,8 +18,10 @@ def generate_preambula(doc: Document):
     # Обнулим преамбулу
     doc.preamble = []
     ################################################
+    doc.preamble.append('')
     ################################################
     # Пакеты, которые будут подключены в преамбулу #
+
     # Пакеты без аргументов
     no_args_packages = [
                 # Работа с русским языком для pdfLatex
@@ -54,6 +59,101 @@ def generate_preambula(doc: Document):
                      }
     for name, args in args_packages.items():
         doc.preamble.append(Package(name=name, options=args))
+    ################################################
+    doc.preamble.append('')
+    ################################################
+    #           Подключение своих команд           #
+
+    doc.preamble.append(
+        Command('DeclareMathOperator', [NoEscape('\sgn'), Command('mathop', arguments='sgn')]))    # Команда \sgn
+    doc.preamble.append(
+        Command('newcommand', NoEscape('\pd'),
+                extra_arguments=[UnsafeCommand('ensuremath',
+                                               UnsafeCommand('cfrac',
+                                                             arguments=[UnsafeCommand('partial', '#1'),
+                                                                        UnsafeCommand('partial', '#2')],
+                                                             ))],
+                options=2)
+    )   # Частная производная \pd
+    doc.preamble.append(
+        Command('newcommand', NoEscape(r'\abs'),
+                extra_arguments=UnsafeCommand('ensuremath', NoEscape(r'\left|#1\right')),
+                options=1)
+    )   # Модуль \abs
+    doc.preamble.append(
+        Command('renewcommand', UnsafeCommand('phi'), extra_arguments=UnsafeCommand('ensuremath', UnsafeCommand('varphi')))
+    )   # Буква phi красивая (по канонам)
+    doc.preamble.append(
+        Command('newcommand', UnsafeCommand('pogk'), options=1,
+                extra_arguments=NoEscape(r'\!\left(\cfrac{\sigma_{#1}}{#1}\right)^{\!\!\!2}\!')
+                )
+    )   # для погрешностей
+    doc.preamble.append(
+        Command('newcommand*', UnsafeCommand('hm'), options=1,
+                extra_arguments=UnsafeCommand(r'#1\nobreak\discretionary{}{\hbox{$\mathsurround=0pt #1$}}{}'))
+    )  # Перенос знаков в формулах (по Львовскому)
+    ################################################
+    doc.preamble.append('')
+    ################################################
+    #               Путь для картинок              #
+    doc.preamble.append(
+        Command('graphicspath', NoEscape(r'%s' % IMAGES_PATH))
+    )  # Путь для картинок
+    ################################################
+    doc.preamble.append('')
+    ################################################
+    #           Определить цвета                   #
+    doc.preamble.append(
+        Command('definecolor', ['BlueGreen', 'RGB', '49, 152, 255'])
+    )
+    doc.preamble.append(
+        Command('definecolor', ['Violet', 'RGB', '120, 80, 120'])
+    )   # назначить цвета при подключении RGB
+    ################################################
+    doc.preamble.append('')
+    ################################################
+    #             Всякая всячина                   #
+    doc.preamble.append(
+        Command(r'setlength\fboxsep', '3pt')
+    )   # Отступ рамки \fbox{} от рисунка
+    doc.preamble.append(
+        Command(r'setlength\fboxrule', '1pt')
+    )   # Обтекание рисунков и таблиц текстом
+    doc.preamble.append(
+        Command('captionsetup', ['labelsep=period, labelfont=bf'])
+    )
+    doc.preamble.append(
+        Command('titlelabel', NoEscape(r'\thetitle.\quad'))
+    )
+    ################################################
+    doc.preamble.append('')
+    ################################################
+    #           Работа с теоремами                 #
+    doc.preamble.append(Command('theoremstyle', 'plain'))   # "Теорема"
+    # TODO: Я сделал hard-code здесь, поскольку не нашел, как сделать [] после {}{}
+    doc.preamble.append(NoEscape(r'\newtheorem{theorem}{Теорема}[section]'))
+    doc.preamble.append(NoEscape(r'\newtheorem{proposition}[theorem]{Утверждение}'))
+
+    doc.preamble.append(Command('theoremstyle', 'definition'))  # "Определение"
+    doc.preamble.append(NoEscape(r'\newtheorem{definition}{Определение}[section]'))
+    doc.preamble.append(NoEscape(r'\newtheorem{corollary}{Следствие}[theorem]'))
+    doc.preamble.append(NoEscape(r'\newtheorem{problem}{Задача}[section]'))
+
+    doc.preamble.append(Command('theoremstyle', 'remark'))  # "Примечание"
+    doc.preamble.append(NoEscape(r'\newtheorem*{nonum}{Решение}'))
+    doc.preamble.append(NoEscape(r'\newtheorem{zamech}{Замечание}[theorem]'))
+    ################################################
+    doc.preamble.append('')
+    ################################################
+    #  Правильные мат.символы для русского языка   #
+    doc.preamble.append(Command('renewcommand', [Command('epsilon'), Command('ensuremath', Command('varepsilon'))]))
+    doc.preamble.append(Command('renewcommand', [Command('phi'), Command('ensuremath', Command('varphi'))]))
+    doc.preamble.append(Command('renewcommand', [Command('kappa'), Command('ensuremath', Command('varkappa'))]))
+    doc.preamble.append(Command('renewcommand', [Command('le'), Command('ensuremath', Command('leslant'))]))
+    doc.preamble.append(Command('renewcommand', [Command('leq'), Command('ensuremath', Command('leqslant'))]))
+    doc.preamble.append(Command('renewcommand', [Command('ge'), Command('ensuremath', Command('geslant'))]))
+    doc.preamble.append(Command('renewcommand', [Command('geq'), Command('ensuremath', Command('geqslant'))]))
+    doc.preamble.append(Command('renewcommand', [Command('emptyset'), Command('ensuremath', Command('varnothing'))]))
     ################################################
 
 
