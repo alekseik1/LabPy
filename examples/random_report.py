@@ -1,7 +1,7 @@
 from src.main import *
 from elizabeth import Text
 from pylatex.utils import bold, italic
-from pylatex import Math, Alignat, VectorName, Matrix, Eqref, Marker, Pageref
+from pylatex import Math, Alignat, VectorName, Matrix, Eqref, Marker, Pageref, Center
 from pylatex.basic import Environment
 
 if __name__ == '__main__':
@@ -31,4 +31,10 @@ if __name__ == '__main__':
                     r'и на своего мужа. '])
         doc.extend([r'На страницу', NoEscape(r'\,'), Pageref(Marker('eq2')), NoEscape(r'\,'),
                     r'и на своего мужа. ', r'Да, я на коне.'])
+    ################################################
+    #   Проверка присоединения стороннего файла    #
+    with doc.create(Center()):
+        doc.append(bold(r'А теперь добавим файл Гоши'))
+    add_from_tex_file(doc, 'latex_template/annotation_and_teor.tex')
     doc.generate_pdf('test', clean_tex=False)
+    ################################################

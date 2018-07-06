@@ -1,5 +1,6 @@
 import pylatex as plx
 from pylatex import Document, Package, Command, NoEscape, UnsafeCommand, LineBreak, Section
+import os
 
 # Путь для картинок
 IMAGES_PATH = 'images/'
@@ -192,6 +193,23 @@ def create_document(fill_preamble: bool=True):
     if fill_preamble:
         tmp_doc = generate_preambula(tmp_doc)
     return tmp_doc
+
+
+def add_from_tex_file(doc: Document, path: str):
+    """
+    Добавляет в *doc* весь контент из файла (через \include)
+
+    :param doc: Объект *Document*, в которой добавляем файл
+    :param path: Относительный путь до файла (корень начинается с корневой папки **проекта**)
+    :return: Измененный объект *doc* типа **Document**
+    """
+    is_relative_path = not os.path.isabs(path)
+    if is_relative_path:
+        filename = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)), path)
+    else:
+        filename = path
+    doc.append(UnsafeCommand('input', filename))
+    return doc
 
 
 if __name__ == '__main__':
