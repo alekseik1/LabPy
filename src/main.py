@@ -1,5 +1,5 @@
 import pylatex as plx
-from pylatex import Document, Package, Command, NoEscape, UnsafeCommand, LineBreak
+from pylatex import Document, Package, Command, NoEscape, UnsafeCommand, LineBreak, Section
 
 # Путь для картинок
 IMAGES_PATH = 'images/'
@@ -48,6 +48,7 @@ def generate_preambula(doc: Document):
                 'indentfirst',  # Красная строка
                 'titlesec',
                 'bm',           # Жирный греческий шрифт
+                'bigstrut'
                 ]
     doc.preamble.extend([Package(i) for i in no_args_packages])
     # hyperref требует доп. аргументов
@@ -154,6 +155,18 @@ def generate_preambula(doc: Document):
     doc.preamble.append(Command('renewcommand', [Command('geq'), Command('ensuremath', Command('geqslant'))]))
     doc.preamble.append(Command('renewcommand', [Command('emptyset'), Command('ensuremath', Command('varnothing'))]))
     ################################################
+    return doc
+
+
+def generate_summary(doc: Document):
+    """
+    Прописывает *Заключение* в документ **doc**
+
+    :param doc: Объект типа **Document**
+    :return: Объект *Document* с **добавленным** заключением
+    """
+    with doc.create(Section(r'Заключение')):
+        doc.append(r'Это текст заключения')
     return doc
 
 
