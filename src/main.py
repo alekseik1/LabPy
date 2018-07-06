@@ -155,6 +155,7 @@ def generate_preambula(doc: Document):
     doc.preamble.append(Command('renewcommand', [Command('geq'), Command('ensuremath', Command('geqslant'))]))
     doc.preamble.append(Command('renewcommand', [Command('emptyset'), Command('ensuremath', Command('varnothing'))]))
     ################################################
+    return doc
 
 
 if __name__ == '__main__':
