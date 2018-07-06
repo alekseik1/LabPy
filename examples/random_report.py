@@ -14,7 +14,8 @@ if __name__ == '__main__':
             bold(ru.text(40)),
             italic(ru.text(40)),
             ]
-    doc = generate_summary(create_document(), text=''.join(text))
+    doc = generate_titlepage(create_document())
+    doc = generate_summary(doc, text=''.join(text))
     ################################################
     ################################################
     #       Проверка математики и ссылок           #
