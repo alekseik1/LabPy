@@ -170,8 +170,14 @@ def generate_summary(doc: Document):
     return doc
 
 
-if __name__ == '__main__':
-    doc = Document(fontenc='T2A',
+def create_document(fill_preamble: bool=True):
+    """
+    Создает пустой документ и (опционально) заполняет его преамбулой.
+
+    :param fill_preamble: Заполнять преамбулой или нет
+    :return: Объект типа *Document* для дальнейшего заполнения
+    """
+    tmp_doc = Document(fontenc='T2A',
                    documentclass='article',
                    document_options=['a4paper', '12pt'],
                    geometry_options={'left': '1.27cm',
@@ -179,6 +185,13 @@ if __name__ == '__main__':
                                      'top': '2cm',
                                      'bottom': '2cm'},
                    lmodern=False)
+    if fill_preamble:
+        tmp_doc = generate_preambula(tmp_doc)
+    return tmp_doc
+
+
+if __name__ == '__main__':
+    doc = create_document()
     generate_preambula(doc)
     generate_summary(doc)
     doc.generate_pdf('main', clean_tex=False)
