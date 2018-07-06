@@ -45,8 +45,6 @@ def generate_preambula(doc: Document):
 
                 'longtable',    # Длинные таблицы
                 'multirow',     # Слиянение строк в таблице
-                # TODO: разберись, что с ним не так
-                #'caption',
                 'indentfirst',  # Красная строка
                 'titlesec',
                 'bm',           # Жирный греческий шрифт
