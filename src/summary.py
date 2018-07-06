@@ -6,6 +6,7 @@ def generate_summary(doc: Document, text: str=''):
     Прописывает *Заключение* в документ **doc**
 
     :param doc: Объект типа **Document**
+    :param text: Текст, который будет записан в *Заключении*
     :return: Объект *Document* с **добавленным** заключением
     """
 
