@@ -12,13 +12,13 @@ def create_document(fill_preamble: bool=True):
     :return: Объект типа *Document* для дальнейшего заполнения
     """
     tmp_doc = Document(fontenc='T2A',
-                   documentclass='article',
-                   document_options=['a4paper', '12pt'],
-                   geometry_options={'left': '1.27cm',
-                                     'right': '1.27cm',
-                                     'top': '2cm',
-                                     'bottom': '2cm'},
-                   lmodern=False)
+                       documentclass='article',
+                       document_options=['a4paper', '12pt'],
+                       geometry_options={'left': '1.27cm',
+                                         'right': '1.27cm',
+                                         'top': '2cm',
+                                         'bottom': '2cm'},
+                       lmodern=False)
     if fill_preamble:
         tmp_doc = generate_preambula(tmp_doc)
     return tmp_doc
