@@ -88,8 +88,9 @@ def generate_preambula(doc: Document):
                 extra_arguments=NoEscape(r'\!\left(\cfrac{\sigma_{#1}}{#1}\right)^{\!\!\!2}\!')
                 )
     )   # для погрешностей
+    doc.preamble.append(UnsafeCommand('providecommand', ['hm', '']))
     doc.preamble.append(
-        Command('newcommand*', UnsafeCommand('hm'), options=1,
+        Command('renewcommand*', UnsafeCommand('hm'), options=1,
                 extra_arguments=UnsafeCommand(r'#1\nobreak\discretionary{}{\hbox{$\mathsurround=0pt #1$}}{}'))
     )  # Перенос знаков в формулах (по Львовскому)
     ################################################
@@ -120,7 +121,7 @@ def generate_preambula(doc: Document):
         Command(r'setlength\fboxrule', '1pt')
     )   # Обтекание рисунков и таблиц текстом
     doc.preamble.append(
-        Command('captionsetup', ['labelsep=period, labelfont=bf'])
+        Command('captionsetup', ['labelsep=period, labelfont=bf'], packages=[Package('caption')])
     )
     doc.preamble.append(
         Command('titlelabel', NoEscape(r'\thetitle.\quad'))
