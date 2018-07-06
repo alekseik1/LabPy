@@ -171,6 +171,14 @@ def generate_summary(doc: Document):
 
 
 if __name__ == '__main__':
-    doc = Document(fontenc='T2A')
+    doc = Document(fontenc='T2A',
+                   documentclass='article',
+                   document_options=['a4paper', '12pt'],
+                   geometry_options={'left': '1.27cm',
+                                     'right': '1.27cm',
+                                     'top': '2cm',
+                                     'bottom': '2cm'},
+                   lmodern=False)
     generate_preambula(doc)
-    doc.generate_tex()
+    generate_summary(doc)
+    doc.generate_pdf('main', clean_tex=False)
