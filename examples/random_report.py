@@ -4,8 +4,6 @@ from pylatex.utils import bold, italic
 from pylatex import Math, Alignat, VectorName, Eqref, Marker, Pageref, Center, Command, Section, NoEscape
 import random
 
-from src.summary import generate_summary
-
 if __name__ == '__main__':
     # Здесь будет тестирование работы ЛаТеХа
     ################################################
