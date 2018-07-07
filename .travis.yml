@@ -28,7 +28,7 @@ deploy:
   provider: releases
   skip-cleanup: true
   api_key: $GITHUB_TOKEN
-  file: "examples/test.pdf"
+  file: "test.pdf"
   overwrite: true
   on:
     tags: true
