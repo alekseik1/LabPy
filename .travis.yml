@@ -1,0 +1,35 @@
+sudo: reqiured
+dist: trusty
+
+cache:
+  - pip
+
+language: python
+env:
+  - LATEX_PACKAGES="texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra dvipng texlive-latex-recommended texlive-base texlive-bibtex-extra texlive-extra-utils texlive-font-utils texlive-binaries texlive-generic-extra texlive-generic-recommended texlive-lang-cyrillic texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-luatex texlive-math-extra texlive-pictures texlive-pstricks texlive-science texlive-xetex"
+
+python:
+  - "3.5"
+
+before_install:
+  - pip install -r requirements.txt
+  - sudo apt-get -qq update && sudo apt-get install -y $LATEX_PACKAGES
+
+install:
+  - for i in $(seq 1 10); do python main.py; if [ $? -eq 0 ]; then break; fi; done
+
+script:
+  - find . -name "all.pdf"
+
+before_deploy:
+  - git config --local user.name "alekseik1"
+  - git config --local user.email "alekseik1@yandex.ru"
+
+deploy:
+  provider: releases
+  skip-cleanup: true
+  api_key: $GITHUB_TOKEN
+  file: "all.pdf"
+  overwrite: true
+  on:
+    tags: true
