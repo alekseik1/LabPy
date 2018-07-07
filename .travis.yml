@@ -18,7 +18,7 @@ before_install:
   - sudo apt-get -qq update && sudo apt-get install -y $LATEX_PACKAGES
 
 script:
-  - for i in $(seq 1 10); do python $MAIN_FILE; if [ $? -eq 0 ]; then break; fi; done
+  - python $MAIN_FILE
 
 before_deploy:
   - git config --local user.name "alekseik1"
