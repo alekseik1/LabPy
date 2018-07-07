@@ -19,6 +19,7 @@ if __name__ == '__main__':
                              lab_number='.'.join([*str(random.randint(100, 999))]),
                              lab_title=Text('ru').quote(),
                              )
+    doc = generate_theor_introduction(doc, 'latex_template/annotation_and_teor.tex')
     doc = generate_summary(doc, text=''.join(text))
     ################################################
     ################################################
