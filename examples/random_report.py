@@ -1,7 +1,8 @@
 from src.main import *
-from elizabeth import Text
+from elizabeth import Text, Personal
 from pylatex.utils import bold, italic
 from pylatex import Math, Alignat, VectorName, Eqref, Marker, Pageref, Center, Command, Section, NoEscape
+import random
 
 from src.summary import generate_summary
 
@@ -14,7 +15,12 @@ if __name__ == '__main__':
             bold(ru.text(40)),
             italic(ru.text(40)),
             ]
-    doc = generate_titlepage(create_document())
+    doc = generate_titlepage(create_document(),
+                             author=Personal('ru').full_name(gender='male'),     # Рандомные значения
+                             group=random.randint(100, 1000),
+                             lab_number='.'.join([*str(random.randint(100, 999))]),
+                             lab_title=Text('ru').quote(),
+                             )
     doc = generate_summary(doc, text=''.join(text))
     ################################################
     ################################################
