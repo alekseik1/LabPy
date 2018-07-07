@@ -1,8 +1,8 @@
 from pylatex import Document, UnsafeCommand
 import os
-from src.preamble import generate_preambula
-from src.summary import generate_summary
-from src.title_page import generate_titlepage
+from .preamble import generate_preambula
+from .summary import generate_summary
+from .title_page import generate_titlepage
 
 
 def create_document(fill_preamble: bool=True):
