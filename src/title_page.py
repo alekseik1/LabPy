@@ -1,6 +1,12 @@
-from pylatex import Document, Command, Center, LargeText, NewLine, NoEscape, HugeText
+from pylatex import Document, Command, Center, LargeText, LineBreak, NoEscape, HugeText, NewPage, UnsafeCommand
 from pylatex.basic import Environment
 from pylatex.utils import italic, bold
+
+################################################
+UNIVERSITY_NANE = r'Московский физико-технический институт'
+# TODO: поменяйте на свой факультет
+DEPARTMENT_NAME = r'Факультет молекулярной и химической физики'
+################################################
 
 
 class TitlePage(Environment):
@@ -12,61 +18,61 @@ class FlushRight(Environment):
 
 
 def generate_titlepage(doc: Document,
-                       title: str='Хорошееназвание',
+                       lab_title: str='Хорошая лаба',
                        lab_number: str='4.1.3',
-                       author: str='Хорошего автора',
+                       author: str='Хороший автор',
                        group: str='642',
                        date: str='',
                        ):
     """
     Генерирует титульник для лабы.
     :param doc: Объект *Document*, в который будет запись
-    :param title: Название лабы
+    :param lab_title: Название лабы
+    :param lab_number: Номер лабы в лабнике
     :param author: Имя автора (будет отображаться)
+    :param group: Номер группы, в которой ты учишься
     :param date: Дата изготовления. Если не укзывается, берется сегодня (\today).
     :return: Объект *Document* с внесенными изменениями
     """
-    # TODO: Это хардкор. Может, напишешь нормально титульник?
-    doc.extend([
-        NoEscape(r'\begin{titlepage}'),
-        NoEscape(r'\begin{center} '),
-        NoEscape(r'\large Московский физико-технический институт\\'),
-        NoEscape(r'Факультет молекулярной и химической физики\\'),
-        NoEscape(r'\vspace{7cm}'),
-        NoEscape(r'\huge Лабораторная работа №4.1.3\\'),
-        NoEscape(r'\textbf{\Large <<Рефрактометр Аббе>>}\\'),
-        NoEscape(r'\end{center} '),
-        NoEscape(r'\vspace{7.5cm}'),
-        NoEscape(r'{\par \raggedleft \large \emph{Выполнил:}\\'
-                 r' студент 1 курса\\ '
-                 r'642 группы ФМХФ\\'
-                 r' Демьянов Георгий\\ '
-                 r'Сергеевич \par}'),
-        NoEscape(r'\begin{center}'),
-        NoEscape(r'\vfill Москва 2018'),
-        NoEscape(r'\end{center}'),
-        NoEscape(r'\end{titlepage}'),
-        NoEscape(r'\newpage'),
+    with doc.create(TitlePage()):
+        with doc.create(Center()):
+            # Название вуза сверху
+            doc.append(Command('large'))
+            doc.append(UNIVERSITY_NANE)
+            doc.append(LineBreak())
 
-    ])
-    # TODO: это шаблон из вышки, но он не работает. Думаю, стоит его сделать потом
-    '''
-    doc.append(Command('thispagestyle', 'empty'))
-    with doc.create(Center()):
-        doc.append(italic(r'Московский физико-технический институт'))      # Университет
-        doc.append(NewLine())
-        doc.append(LargeText(r'Факультет молекулярной и химической физики'))  # Факультет
-    doc.append(Command('vspace', '13ex'))
-    with doc.create(FlushRight()):
-        doc.append(Command('noindent'))
-        doc.append(italic(author))
-        doc.append(NewLine())
-        doc.append(r'группы %s' % group)
-    with doc.create(Center()):
-        doc.append(Command('vspace', '13ex'))
-        doc.append(bold(Command('Large', r'<< %s >>' % title).dumps(), escape=False))
-        doc.append(NewLine())
-        doc.append(bold(LargeText(r'<< %s >>' % title).dumps()))
-    '''
+            # Название факультета
+            doc.append(DEPARTMENT_NAME)
+            doc.append(NoEscape(r'\\'))
+            doc.append(Command('vspace', '7cm'))
+
+            # Название и номер лабы
+            doc.append(Command('huge'))
+            doc.append(NoEscape(r'Лабораторная работа №%s\\' % lab_number))
+            doc.append(bold(Command('Large').dumps() +
+                            '<< %s >>' % lab_title,
+                            escape=False))
+        doc.append(Command('vspace', '7.5cm'))
+
+        # Большая магия. Текст справа с указанием автора
+        with doc.create(FlushRight()):
+            doc.append(Command('noindent'))
+            doc.append(r'Выполнил: ')
+            doc.append(LineBreak())
+            doc.append(r'%s' % author)
+            doc.append(LineBreak())
+            doc.append(r'студент группы %s' % group)
+
+        # "Москва <дата>" внизу страницы
+        with doc.create(Center()):
+            doc.append(Command('vfill'))
+            doc.append(r'Москва ')           # Где сделан документ
+            if date == '':
+                doc.append(Command('today'))    # Когда сделан документ
+            else:
+                doc.append(date)    # Если указать дату явно
+
+    # Перенос строки в конце
+    doc.append(NewPage())
 
     return doc
