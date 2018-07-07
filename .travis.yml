@@ -7,6 +7,7 @@ cache:
 language: python
 env:
   - LATEX_PACKAGES="texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra dvipng texlive-latex-recommended texlive-base texlive-bibtex-extra texlive-extra-utils texlive-font-utils texlive-binaries texlive-generic-extra texlive-generic-recommended texlive-lang-cyrillic texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-luatex texlive-math-extra texlive-pictures texlive-pstricks texlive-science texlive-xetex"
+  - MAIN_FILE=examples/random_report.py
 
 python:
   - "3.5"
@@ -16,7 +17,7 @@ before_install:
   - sudo apt-get -qq update && sudo apt-get install -y $LATEX_PACKAGES
 
 install:
-  - for i in $(seq 1 10); do python main.py; if [ $? -eq 0 ]; then break; fi; done
+  - for i in $(seq 1 10); do python $MAIN_FILE; if [ $? -eq 0 ]; then break; fi; done
 
 script:
   - find . -name "all.pdf"
