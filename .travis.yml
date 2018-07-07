@@ -18,7 +18,7 @@ before_install:
   - sudo apt-get -qq update && sudo apt-get install -y $LATEX_PACKAGES
 
 script:
-  - cd example && python $MAIN_FILE
+  - pwd && PYTHONPATH=$PYTHONPATH:./ python $MAIN_FILE
 
 before_deploy:
   - git config --local user.name "alekseik1"
