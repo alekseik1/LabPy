@@ -1,4 +1,4 @@
-from pylatex import Document, Center, Command, NoEscape
+from pylatex import Document, Center, NoEscape, UnsafeCommand
 from pylatex.utils import bold
 
 
@@ -14,21 +14,21 @@ def generate_annotation(doc: Document, text: str=""):
     :return: Объект *Document* с внесенными изменениями
     """
     with doc.create(Center()):
-        doc.append(Command(
+        doc.append(UnsafeCommand(
             'vspace',   # Отступ
             ['0.5cm',
-             Command(
-                 'parbox', '16cm',  # "Коробочка" посередине
-                 Command(
+             UnsafeCommand(
+                 'parbox', ['16cm',  # "Коробочка" посередине
+                 UnsafeCommand(
                      'small',
-                     Command(
+                     UnsafeCommand(
                          'centering',
                          bold('Аннотация') + NoEscape(r'\\') +
-                         Command('hspace', '0.6cm').dumps() +
+                         UnsafeCommand('hspace', '0.6cm').dumps() +
                          text   # Сам текст
                      )
-                 )
+                 )]
              )
              ]
         ))
-
+    return doc
