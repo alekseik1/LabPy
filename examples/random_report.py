@@ -5,6 +5,7 @@ from pylatex import Math, Alignat, VectorName, Eqref, Marker, Pageref, Center, C
 import random
 
 from src.summary import generate_summary
+from src.annotation import generate_annotation
 
 if __name__ == '__main__':
     # Здесь будет тестирование работы ЛаТеХа
@@ -21,6 +22,12 @@ if __name__ == '__main__':
                              lab_number='.'.join([*str(random.randint(100, 999))]),
                              lab_title=Text('ru').quote(),
                              )
+    doc = generate_annotation(
+        doc,
+        r'В этом отчете я сделал кучу дряни, '
+        + italic(r'зато ')
+        + UnsafeCommand('textbf', 'научился ').dumps()
+        + UnsafeCommand('underline', 'выделять ').dumps())
     doc = generate_summary(doc, text=''.join(text))
     ################################################
     ################################################
