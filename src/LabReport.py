@@ -19,6 +19,27 @@ class LabReport(Document):
     UNIVERSITY_NANE = r'Московский физико-технический институт'
     DEPARTMENT_NAME = r'Факультет молекулярной и химической физики'
 
+    def __init__(self, **kwargs):
+        # Далее идет инициализация параметров документа по умолчанию
+        # Если их явным образом указать, они будут переопределены
+        if kwargs.get('fontenc') is None:
+            kwargs.update({'fontenc': 'T2A'})
+        if kwargs.get('documentclass') is None:
+            kwargs.update({'documentclass': 'article'})
+        if kwargs.get('document_options') is None:
+            kwargs.update({'document_options': ['a4paper', '12pt']})
+        if kwargs.get('geometry_options') is None:
+            kwargs.update({'geometry_options':
+                               {'left': '1.27cm',
+                                'right': '1.27cm',
+                                'top': '2cm',
+                                'bottom': '2cm'}
+                           })
+        if kwargs.get('lmodern') is None:
+            kwargs.update({'lmodern': False})
+        super().__init__(**kwargs)
+
+
     def set_images_path(self, path: str):
         self.IMAGES_PATH = path
 
