@@ -6,6 +6,7 @@ import random
 
 from src.summary import generate_summary
 from src.annotation import generate_annotation
+from src.analysis import *
 
 if __name__ == '__main__':
     # Здесь будет тестирование работы ЛаТеХа
@@ -29,6 +30,7 @@ if __name__ == '__main__':
         + UnsafeCommand('textbf', 'научился ').dumps()
         + UnsafeCommand('underline', 'выделять ').dumps())
     doc = generate_summary(doc, text=''.join(text))
+    doc = insert_table_from_file(doc, 'Таблица228', 'examples/data.csv')
     ################################################
     ################################################
     #       Проверка математики и ссылок           #
