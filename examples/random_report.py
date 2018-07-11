@@ -7,6 +7,7 @@ import random
 from src.summary import generate_summary
 from src.annotation import generate_annotation
 
+
 if __name__ == '__main__':
     # Здесь будет тестирование работы ЛаТеХа
     ################################################
@@ -28,6 +29,12 @@ if __name__ == '__main__':
         + italic(r'зато ')
         + UnsafeCommand('textbf', 'научился ').dumps()
         + UnsafeCommand('underline', 'выделять ').dumps())
+    doc = generate_theor_introduction(doc, 'latex_template/annotation_and_teor.tex')
+    doc = generate_summary(doc, text=''.join(text))
+    ################################################
+    ################################################
+    #       Проверка математики и ссылок           #
+    with doc.create(Section(r'Проверка математики')):
     doc = generate_summary(doc, text=''.join(text))
     ################################################
     ################################################

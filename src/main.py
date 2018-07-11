@@ -2,7 +2,6 @@ from pylatex import Document, UnsafeCommand
 import os
 from .preamble import generate_preambula
 from .summary import generate_summary
-from .title_page import generate_titlepage
 
 
 def create_document(fill_preamble: bool=True):
@@ -40,6 +39,9 @@ def add_from_tex_file(doc: Document, path: str):
         filename = path
     doc.append(UnsafeCommand('input', filename))
     return doc
+
+from .title_page import generate_titlepage
+from src.theor_introduction import generate_theor_introduction
 
 
 if __name__ == '__main__':
