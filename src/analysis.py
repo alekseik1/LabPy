@@ -38,6 +38,21 @@ def insert_table_from_file(doc: Document,
     else:
         filename = path
     df = pd.read_csv(filename)
+    insert_dataframe(doc, df, caption, wrap_table, **kwargs)
+    return doc
+
+
+def insert_dataframe(doc: Document, df: pd.DataFrame=None, caption: str="", wrap_table: bool=False, **kwargs):
+    """
+    Вставляет датафрейм как *таблицу* в документ
+
+    :param doc: Объект *Document*, куда вставлять таблицу
+    :param df: Объект *DataFrame*, который вставлять
+    :param caption: Название таблицы
+    :param wrap_table: Обтекать таблицу текстом или нет
+    :return: Объект *Document* с внесенными изменениями
+    """
+
     kwargs.update({'index': False,   # По-умолчанию нумерация строк отключена
                    'column_format': '|c'*(len(df.keys())+1)+'|'}     # Выравнивание по центру с || между columns
                   )
@@ -46,7 +61,7 @@ def insert_table_from_file(doc: Document,
         with doc.create(Table(position='htbp')):
             doc.append(UnsafeCommand('centering'))
             doc.append(UnsafeCommand('caption', NoEscape(caption)))
-            doc.append(NoEscape(df.to_latex(**kwargs)
+            doc.append(NoEscape(df.to_latex(**kwargs).replace(r'\\', r'\\ \hline')
                                 )
                        )
     else:
