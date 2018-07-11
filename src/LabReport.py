@@ -345,11 +345,11 @@ class LabReport(Document):
         """
         return add_from_tex_file(self, path)
 
-    def insert_table_from_file(self,
-                               caption: str = 'Название',
-                               path: str = "table1.csv",
-                               wrap_table: bool = False,
-                               **kwargs):
+    def add_table_from_file(self,
+                            caption: str = 'Название',
+                            path: str = "table1.csv",
+                            wrap_table: bool = False,
+                            **kwargs):
         """
         Вставляет таблицу в документ.
 
