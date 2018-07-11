@@ -255,6 +255,7 @@ class LabReport(Document):
                       ):
         """
         Генерирует титульник для лабы.
+
         :param lab_title: Название лабы
         :param lab_number: Номер лабы в лабнике
         :param author: Имя автора (будет отображаться)
