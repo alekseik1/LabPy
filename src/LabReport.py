@@ -1,7 +1,8 @@
-from pylatex import Document, Center, NoEscape, UnsafeCommand, Command, Package, Section, LineBreak, NewPage
+from pylatex import Document, Center, NoEscape, UnsafeCommand, Command, Package, Section, LineBreak, NewPage, Table
 from pylatex.basic import Environment
 from pylatex.utils import bold
 from src.utils import *
+import pandas as pd
 
 
 class LabReport(Document):
@@ -343,3 +344,52 @@ class LabReport(Document):
         :return: Объект *LabReport* с готовыми изменениями
         """
         return add_from_tex_file(self, path)
+
+    def insert_table_from_file(self,
+                               caption: str = 'Название',
+                               path: str = "table1.csv",
+                               wrap_table: bool = False,
+                               **kwargs):
+        """
+        Вставляет таблицу в документ.
+
+        Заметьте, что *kwargs* будет передан в *df.to_latex()*
+
+        :param caption: Название таблицы
+        :param path: Путь до файла с таблицей
+        :param wrap_table: Обтекать таблицу текстом или нет
+        :return:
+        """
+        is_relative_path = not os.path.isabs(path)
+        if is_relative_path:
+            filename = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)), path)
+        else:
+            filename = path
+        df = pd.read_csv(filename)
+        self.insert_dataframe(df, caption, wrap_table, **kwargs)
+        return self
+
+    def insert_dataframe(self, df: pd.DataFrame = None, caption: str = "", wrap_table: bool = False, **kwargs):
+        """
+        Вставляет датафрейм как *таблицу* в документ
+
+        :param doc: Объект *Document*, куда вставлять таблицу
+        :param df: Объект *DataFrame*, который вставлять
+        :param caption: Название таблицы
+        :param wrap_table: Обтекать таблицу текстом или нет
+        :return: Объект *Document* с внесенными изменениями
+        """
+
+        kwargs.update({'index': False,  # По-умолчанию нумерация строк отключена
+                       'column_format': '|c' * (len(df.keys()) + 1) + '|'}  # Выравнивание по центру с || между columns
+                      )
+
+        if not wrap_table:
+            with self.create(Table(position='htbp')):
+                self.append(UnsafeCommand('centering'))
+                self.append(UnsafeCommand('caption', NoEscape(caption)))
+                self.append(NoEscape(df.to_latex(**kwargs).replace(r'\\', r'\\ \hline')))
+        else:
+            # FIXME: реализуй добавление обтекаемой таблицы
+            self.append(None)
+        return self
