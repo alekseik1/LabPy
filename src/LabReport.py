@@ -4,18 +4,16 @@ from pylatex.utils import bold
 from src.utils import *
 
 
-class TitlePage(Environment):
-    _latex_name = 'titlepage'
-
-
-class FlushRight(Environment):
-    _latex_name = 'flushright'
-
-
 class LabReport(Document):
     """
     Класс отчета лабораторной работы
     """
+
+    class TitlePage(Environment):
+        _latex_name = 'titlepage'
+
+    class FlushRight(Environment):
+        _latex_name = 'flushright'
 
     IMAGES_PATH = 'images/'     # Путь до картинок по умолчанию
     UNIVERSITY_NANE = r'Московский физико-технический институт'
@@ -243,7 +241,7 @@ class LabReport(Document):
         :param date: Дата изготовления. Если не укзывается, берется сегодня (\today).
         :return: Объект *LabReport* с внесенными изменениями
         """
-        with self.create(TitlePage()):
+        with self.create(LabReport.TitlePage()):
             with self.create(Center()):
                 # Название вуза сверху
                 self.append(Command('large'))
@@ -264,7 +262,7 @@ class LabReport(Document):
             self.append(Command('vspace', '7.5cm'))
 
             # Большая магия. Текст справа с указанием автора
-            with self.create(FlushRight()):
+            with self.create(LabReport.FlushRight()):
                 self.append(Command('noindent'))
                 self.append(r'Выполнил: ')
                 self.append(LineBreak())
