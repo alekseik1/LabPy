@@ -40,7 +40,6 @@ class LabReport(Document):
             kwargs.update({'lmodern': False})
         super().__init__(**kwargs)
 
-
     def set_images_path(self, path: str):
         self.IMAGES_PATH = path
 
