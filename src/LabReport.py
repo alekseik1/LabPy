@@ -81,7 +81,10 @@ class LabReport(Document):
         abstract = self.Abstract()
         abstract.append(text)
 
-        self.section_abstract = abstract
+        if text == "":
+            self.section_abstract = ""
+        else:
+            self.section_abstract = abstract
         return self
 
     def add_preamble(self):
@@ -245,11 +248,11 @@ class LabReport(Document):
         """
 
         sec = Section(r'Заключение')
+        sec.append(NoEscape(text))
         if text == '':
-            sec.append(r'Это текст заключения')
+            self.section_summary = ""
         else:
-            sec.append(NoEscape(text))
-        self.section_summary = sec
+            self.section_summary = sec
         return self
 
     def add_titlepage(self,
@@ -318,7 +321,9 @@ class LabReport(Document):
         Создает теоретическое введение к лабе.
 
         Делать его тяжело и неприятно, поэтому имеется возможность
-        взять эту часть из готового .tex файла
+        взять эту часть из готового .tex файла.
+
+        Заметьте, при указании **.tex**-файла содержимое *content* *игнорируется*.
 
         :param content: Строка, которой будет инициализировано теоретическое введение
         :param file_path: Путь к файлу с теор.введением (*необязательно*)
@@ -333,7 +338,10 @@ class LabReport(Document):
             # FIXME: Возможно, в будущем я придумаю идею получше.
             theor_intro.append(content)
 
-        self.section_theor_intro = theor_intro
+        if file_path == "" and content == "":
+            self.section_theor_intro = ""
+        else:
+            self.section_theor_intro = theor_intro
         return self
 
     @staticmethod
