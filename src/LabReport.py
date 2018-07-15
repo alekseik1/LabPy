@@ -1,5 +1,6 @@
 from pylatex import Document, Center, NoEscape, UnsafeCommand, Command, Package, Section, LineBreak, NewPage, Table
 from pylatex.basic import Environment
+from pylatex.base_classes import Container
 from pylatex.utils import bold
 from src.utils import *
 import pandas as pd
@@ -46,6 +47,16 @@ class LabReport(Document):
                            })
         if kwargs.get('lmodern') is None:
             kwargs.update({'lmodern': False})
+
+        # Пустые секции
+        self.parts = [
+            'title_page',
+            'abstract',
+            'theor_intro',
+            'summary'
+        ]
+        for part in self.parts:
+            setattr(self, 'section_%s' % part, Section(r''))
         super().__init__(**kwargs)
 
     def set_images_path(self, path: str):
@@ -57,7 +68,7 @@ class LabReport(Document):
     def set_department_name(self, department_name: str):
         self.DEPARTMENT_NAME = department_name
 
-    def add_annotation(self, text: str = ""):
+    def add_abstract(self, text: str = ""):
         """
         Создает аннотацию для лабораторной работы. Анноптация
         прописывается перед началом текста в центре небольшим
@@ -67,8 +78,10 @@ class LabReport(Document):
         и *pylatex*
         :return: Объект *LabReport* с внесенными изменениями
         """
-        with self.create(self.Abstract()):
-            self.append(text)
+        abstract = self.Abstract()
+        abstract.append(text)
+
+        self.section_abstract = abstract
         return self
 
     def add_preamble(self):
@@ -231,11 +244,12 @@ class LabReport(Document):
         :return: Объект *LabReport* с **добавленным** заключением
         """
 
-        with self.create(Section(r'Заключение')):
-            if text == '':
-                self.append(r'Это текст заключения')
-            else:
-                self.append(NoEscape(text))
+        sec = Section(r'Заключение')
+        if text == '':
+            sec.append(r'Это текст заключения')
+        else:
+            sec.append(NoEscape(text))
+        self.section_summary = sec
         return self
 
     def add_titlepage(self,
@@ -255,89 +269,97 @@ class LabReport(Document):
         :param date: Дата изготовления. Если не укзывается, берется сегодня (\today).
         :return: Объект *LabReport* с внесенными изменениями
         """
-        with self.create(LabReport.TitlePage()):
-            with self.create(Center()):
-                # Название вуза сверху
-                self.append(Command('large'))
-                self.append(self.UNIVERSITY_NANE)
-                self.append(LineBreak())
+        tp = LabReport.TitlePage()
+        with tp.create(Center()) as center:
+            # Название вуза сверху
+            center.append(Command('large'))
+            center.append(self.UNIVERSITY_NANE)
+            center.append(LineBreak())
 
-                # Название факультета
-                self.append(self.DEPARTMENT_NAME)
-                self.append(NoEscape(r'\\'))
-                self.append(Command('vspace', '7cm'))
+            # Название факультета
+            center.append(self.DEPARTMENT_NAME)
+            center.append(NoEscape(r'\\'))
+            center.append(Command('vspace', '7cm'))
 
-                # Название и номер лабы
-                self.append(Command('huge'))
-                self.append(NoEscape(r'Лабораторная работа №%s\\' % lab_number))
-                self.append(bold(Command('Large').dumps() +
-                                 '<< %s >>' % lab_title,
-                                 escape=False))
-            self.append(Command('vspace', '7.5cm'))
+            # Название и номер лабы
+            center.append(Command('huge'))
+            center.append(NoEscape(r'Лабораторная работа №%s\\' % lab_number))
+            center.append(bold(Command('Large').dumps() +
+                             '<< %s >>' % lab_title,
+                             escape=False))
+        tp.append(Command('vspace', '7.5cm'))
 
-            # Большая магия. Текст справа с указанием автора
-            with self.create(LabReport.FlushRight()):
-                self.append(Command('noindent'))
-                self.append(r'Выполнил: ')
-                self.append(LineBreak())
-                self.append(r'%s' % author)
-                self.append(LineBreak())
-                self.append(r'студент группы %s' % group)
+        # Большая магия. Текст справа с указанием автора
+        with tp.create(LabReport.FlushRight()) as fl:
+            fl.append(Command('noindent'))
+            fl.append(r'Выполнил: ')
+            fl.append(LineBreak())
+            fl.append(r'%s' % author)
+            fl.append(LineBreak())
+            fl.append(r'студент группы %s' % group)
 
-            # "Москва <дата>" внизу страницы
-            with self.create(Center()):
-                self.append(Command('vfill'))
-                self.append(r'Москва ')  # Где сделан документ
-                if date == '':
-                    self.append(Command('today'))  # Когда сделан документ
-                else:
-                    self.append(date)  # Если указать дату явно
+        # "Москва <дата>" внизу страницы
+        with tp.create(Center()) as center:
+            center.append(Command('vfill'))
+            center.append(r'Москва ')  # Где сделан документ
+            if date == '':
+                center.append(Command('today'))  # Когда сделан документ
+            else:
+                center.append(date)  # Если указать дату явно
 
         # Перенос строки в конце
         self.append(NewPage())
 
+        self.section_title_page = tp
         return self
 
-    def add_theor_introduction(self, use_file: str = ""):
+    def add_theor_introduction(self, content: str = "", file_path: str = ""):
         """
         Создает теоретическое введение к лабе.
 
         Делать его тяжело и неприятно, поэтому имеется возможность
         взять эту часть из готового .tex файла
 
-        :param use_file: Путь к файлу с теор.введением (*необязательно*)
+        :param content: Строка, которой будет инициализировано теоретическое введение
+        :param file_path: Путь к файлу с теор.введением (*необязательно*)
         :return: Объект *LabReport* с готовыми изменениями
         """
-        if use_file != "":
-            add_from_tex_file(self, use_file)
+        theor_intro = Section(r'Теоретическое введение')
+        if file_path != "":
+            add_from_tex_file(theor_intro, file_path)
         else:
             # TODO: поскольку теор. часть достаточно сложна для ввода,
             # TODO: я заставлю вас редактировать исходники метода под каждую лабу.
             # FIXME: Возможно, в будущем я придумаю идею получше.
-            self.append(r'Я крутое теоретическое введение. ')
-            self.append(r'Кажется, мой создатель обо мне не позаботился. ')
-            self.append(r'В МФТИ классные лабы! ')
+            theor_intro.append(content)
+
+        self.section_theor_intro = theor_intro
         return self
 
-    def add_tex_code(self, code: str = ""):
+    @staticmethod
+    def add_tex_code(section, code: str = ""):
         """
         Вставляет сырой LaTeX-код в отчет.
 
+        :param section: Секция, куда вставлять
         :param code: Строка с кодом, которую нужно вставить
-        :return: Объект *LabReport* с внесенными изменениями
+        :return: Секция *Section* с внесенными изменениями
         """
-        return insert_raw_tex(self, code)
+        return insert_raw_tex(section, code)
 
-    def add_tex_file(self, path: str):
+    @staticmethod
+    def add_tex_file(section, path: str):
         """
         Вставляет содержимое **.tex** файла в отчет
 
+        :param section: Секция, куда вставлять
         :param path: Путь до файла
-        :return: Объект *LabReport* с готовыми изменениями
+        :return: Объект *Section* с готовыми изменениями
         """
-        return add_from_tex_file(self, path)
+        return add_from_tex_file(section, path)
 
-    def add_table_from_file(self,
+    @staticmethod
+    def add_table_from_file(section,
                             caption: str = 'Название',
                             path: str = "table1.csv",
                             wrap_table: bool = False,
@@ -347,10 +369,11 @@ class LabReport(Document):
 
         Заметьте, что *kwargs* будет передан в *df.to_latex()*
 
+        :param section: Секция, куда вставлять
         :param caption: Название таблицы
         :param path: Путь до файла с таблицей
         :param wrap_table: Обтекать таблицу текстом или нет
-        :return:
+        :return: Секция с внесенными изменениями
         """
         is_relative_path = not os.path.isabs(path)
         if is_relative_path:
@@ -358,14 +381,15 @@ class LabReport(Document):
         else:
             filename = path
         df = pd.read_csv(filename)
-        self.insert_dataframe(df, caption, wrap_table, **kwargs)
-        return self
+        LabReport.insert_dataframe(section, df, caption, wrap_table, **kwargs)
+        return section
 
-    def insert_dataframe(self, df: pd.DataFrame = None, caption: str = "", wrap_table: bool = False, **kwargs):
+    @staticmethod
+    def insert_dataframe(section, df: pd.DataFrame = None, caption: str = "", wrap_table: bool = False, **kwargs):
         """
         Вставляет датафрейм как *таблицу* в документ
 
-        :param doc: Объект *Document*, куда вставлять таблицу
+        :param section: Секция, куда вставлять таблицу
         :param df: Объект *DataFrame*, который вставлять
         :param caption: Название таблицы
         :param wrap_table: Обтекать таблицу текстом или нет
@@ -377,11 +401,20 @@ class LabReport(Document):
                       )
 
         if not wrap_table:
-            with self.create(Table(position='htbp')):
-                self.append(UnsafeCommand('centering'))
-                self.append(UnsafeCommand('caption', NoEscape(caption)))
-                self.append(NoEscape(df.to_latex(**kwargs).replace(r'\\', r'\\ \hline')))
+            with section.create(Table(position='htbp')):
+                section.append(UnsafeCommand('centering'))
+                section.append(UnsafeCommand('caption', NoEscape(caption)))
+                section.append(NoEscape(df.to_latex(**kwargs).replace(r'\\', r'\\ \hline')))
         else:
             # FIXME: реализуй добавление обтекаемой таблицы
-            self.append(None)
-        return self
+            section.append(None)
+        return section
+
+    def generate_pdf(self, filepath=None, *, clean=True, clean_tex=True,
+                     compiler=None, compiler_args=None, silent=True):
+        # Добавляем все разделы в ПРАВИЛЬНОМ порядке
+
+        for part in self.parts:
+            self.append(getattr(self, 'section_%s' % part))
+        super().generate_pdf(filepath, clean=clean, clean_tex=clean_tex, compiler=compiler,
+                             compiler_args=compiler_args, silent=silent)
