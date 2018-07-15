@@ -16,9 +16,17 @@ class LabReport(Document):
     class FlushRight(Environment):
         _latex_name = 'flushright'
 
+    class Abstract(Environment):
+        _latex_name = 'abstract'
+        _escape = False
+
+    ################################################
+    #               Значения по умолчанию          #
+    ################################################
     IMAGES_PATH = 'images/'     # Путь до картинок по умолчанию
     UNIVERSITY_NANE = r'Московский физико-технический институт'
     DEPARTMENT_NAME = r'Факультет молекулярной и химической физики'
+    ################################################
 
     def __init__(self, **kwargs):
         # Далее идет инициализация параметров документа по умолчанию
@@ -59,24 +67,8 @@ class LabReport(Document):
         и *pylatex*
         :return: Объект *LabReport* с внесенными изменениями
         """
-        with self.create(Center()):
-            self.append(UnsafeCommand(
-                'vspace',  # Отступ
-                ['0.5cm',
-                 UnsafeCommand(
-                     'parbox', ['16cm',  # "Коробочка" посередине
-                                UnsafeCommand(
-                                    'small',
-                                    UnsafeCommand(
-                                        'centering',
-                                        bold('Аннотация') + NoEscape(r'\\') +
-                                        UnsafeCommand('hspace', '0.6cm').dumps() +
-                                        text  # Сам текст
-                                    )
-                                )]
-                 )
-                 ]
-            ))
+        with self.create(self.Abstract()):
+            self.append(text)
         return self
 
     def add_preamble(self):
