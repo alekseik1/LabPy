@@ -52,6 +52,7 @@ class LabReport(Document):
         self.parts = [
             'title_page',
             'abstract',
+            'equipment',
             'theor_intro',
             'summary'
         ]
@@ -85,6 +86,22 @@ class LabReport(Document):
             self.section_abstract = ""
         else:
             self.section_abstract = abstract
+        return self
+
+    def add_equipment(self, text: str=""):
+        """
+        Создает секцию "Оборудование" и прописывает туда текст
+
+        :param text: Текст, который будет записан в секции
+        :type text: str
+        :return: Объект *LabReport* с внесенными изменениями
+        """
+        sec = Section(r'Оборудование')
+        sec.append(NoEscape(text))
+        if text == '':
+            self.section_equipment = ""
+        else:
+            self.section_equipment = sec
         return self
 
     def add_preamble(self):
