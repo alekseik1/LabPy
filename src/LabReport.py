@@ -56,7 +56,7 @@ class LabReport(Document):
             'summary'
         ]
         for part in self.parts:
-            setattr(self, 'section_%s' % part, Section(r''))
+            setattr(self, 'section_%s' % part, '')
         super().__init__(**kwargs)
 
     def set_images_path(self, path: str):
