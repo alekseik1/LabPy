@@ -25,4 +25,4 @@ if __name__ == '__main__':
         file_path='labs/4sem/theor.tex'
     )
 
-    lab.generate_pdf('report')
+    lab.generate_pdf('release')
