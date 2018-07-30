@@ -1,5 +1,6 @@
 from src.LabReport import LabReport
-from elizabeth import Text, Personal
+from mimesis import Text, Person
+from mimesis.enums import Gender
 import random
 from src.utils import *
 # КУЧА пактов pylatex -- ТОЛЬКО для тестов
@@ -20,7 +21,7 @@ if __name__ == '__main__':
     lab\
         .add_preamble()\
         .add_titlepage(
-            author=Personal('ru').full_name(gender='male'),
+            author=Person('ru').full_name(gender=Gender.MALE),
             group=random.randint(100, 1000),
             lab_number='.'.join([*str(random.randint(100, 999))]),
             lab_title=Text('ru').quote()
