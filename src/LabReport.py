@@ -254,6 +254,11 @@ class LabReport(Document):
         self.preamble.append(
             Command('renewcommand', [Command('emptyset'), Command('ensuremath', Command('varnothing'))]))
         ################################################
+        ################################################
+        #  Егор (@chelberserker) добавил свои команды  #
+        self.preamble.append(Command('newcommand', [Command('bbN'), Command('varepsilon')]))
+        self.preamble.append(Command('newcommand', [Command('dif'), Command('mathrm', 'd')]))
+        ################################################
         return self
 
     def add_summary(self, text: str = ''):
